@@ -20,7 +20,7 @@ public class GuestList {
     @Id
     private ObjectId id;
 
-    private Enum<StatusEnum> status;
+    private StatusEnum status;
 
     @DocumentReference
     private User user;

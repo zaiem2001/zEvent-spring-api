@@ -32,8 +32,8 @@ public class Event {
 
     private int maxCapacity;
 
-    private Enum<MediumEnum> medium;
-    private Enum<PrivacyEnum> privacy;
+    private MediumEnum medium;
+    private PrivacyEnum privacy;
 
     private IDate date;
 
