@@ -7,6 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zevent.zevent.exceptions.CustomException;
 import com.zevent.zevent.model.Event;
 import com.zevent.zevent.model.GuestList;
 import com.zevent.zevent.model.User;
@@ -51,11 +52,11 @@ public class EventService {
     }
 
     public GuestList enterTheEvent(ObjectId eventId, EnterEventReqBody enterEventReqBody) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException("Event not found"));
         StatusEnum joineeStatus = enterEventReqBody.getStatus();
 
         if (joineeStatus == StatusEnum.APPROVED || joineeStatus == StatusEnum.REJECTED) {
-            throw new RuntimeException("You cannot join this event.");
+            throw new CustomException("You cannot join this event.");
         }
 
         User currentUser = loggedInUserDetails.getUserDetails();
@@ -63,7 +64,7 @@ public class EventService {
         GuestList guestList = null;
 
         if (event.getGuestList().size() >= event.getMaxCapacity()) {
-            throw new RuntimeException("Event is full");
+            throw new CustomException("Event is full");
         }
 
         if (joineeStatus == StatusEnum.INVITED) {
@@ -75,34 +76,33 @@ public class EventService {
         GuestList isAlreadyInEvent = guestListService.checkIfUserIsAlreadyInEvent(joinee.get_id(), eventId);
 
         if (canNotJoinEvent(isAlreadyInEvent, joinee, event)) {
-            throw new RuntimeException("You cannot join this event.");
+            throw new CustomException("You cannot join this event.");
         }
 
         guestList = getGuestList(event, joinee, joineeStatus);
-
         GuestList savedGuestList = guestListService.addGuestToEvent(guestList);
 
         return savedGuestList;
     }
 
     public GuestList approveOrRejectEventRequest(ObjectId eventId, EnterEventReqBody enterEventReqBody) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new CustomException("Event not found"));
         StatusEnum joineeStatus = enterEventReqBody.getStatus();
         ObjectId userId = enterEventReqBody.getUserId();
         User currentUser = loggedInUserDetails.getUserDetails();
 
         if (joineeStatus == StatusEnum.INVITED || joineeStatus == StatusEnum.APPLIED) {
-            throw new RuntimeException("Something went wrong!");
+            throw new CustomException("Something went wrong!");
         }
 
         if (event.getGuestList().size() >= event.getMaxCapacity()) {
-            throw new RuntimeException("Event is full");
+            throw new CustomException("Event is full");
         }
 
         GuestList isUserPresent = guestListService.checkIfUserIsAlreadyInEvent(userId, eventId);
 
         if (isUserPresent == null) {
-            throw new RuntimeException("Cannot update status of user who is not in the event");
+            throw new CustomException("Cannot update status of user who is not in the event");
         }
 
         System.out.println(currentUser.get_id() != event.getUser().get_id());
@@ -110,14 +110,14 @@ public class EventService {
         if (joineeStatus == StatusEnum.APPROVED || joineeStatus == StatusEnum.REJECTED) {
             if (!currentUser.get_id().equals(event.getUser().get_id())
                     || isUserPresent.getStatus() != StatusEnum.APPLIED) {
-                throw new RuntimeException("Error modifying the Request!");
+                throw new CustomException("Error modifying the Request!");
             }
 
             return guestListService.updateGuestStatus(isUserPresent, joineeStatus);
         }
 
         if (currentUser.get_id() != userId || isUserPresent.getStatus() != StatusEnum.INVITED) {
-            throw new RuntimeException("You cannot modify this request");
+            throw new CustomException("You cannot modify this request");
         }
 
         return guestListService.updateGuestStatus(isUserPresent, joineeStatus);
