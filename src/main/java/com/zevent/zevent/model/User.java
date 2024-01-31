@@ -14,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zevent.zevent.model.enums.RoleEnum;
 
 import lombok.AllArgsConstructor;
@@ -33,7 +34,10 @@ public class User implements UserDetails {
 
     private String username;
     private String email;
+
+    @JsonIgnore
     private String password;
+
     private String phoneNumber;
 
     private RoleEnum role;

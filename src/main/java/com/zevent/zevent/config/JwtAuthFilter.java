@@ -5,11 +5,13 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.zevent.zevent.model.User;
+import com.zevent.zevent.service.UserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,6 +28,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -51,7 +56,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Checking if the user is not authenticated and if the token is valid
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Getting the user details
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+            User userDetails = this.userService.findByEmail(userEmail).orElse(null);
+            // this.userDetailsService.loadUserByUsername(userEmail);
             var isTokenValid = jwtService.isTokenValid(jwt, userDetails);
 
             if (isTokenValid) {
