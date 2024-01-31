@@ -34,7 +34,6 @@ public class EventService {
 
     public Event createEvent(EventReqBody eventBody) {
         User userDetails = loggedInUserDetails.getUserDetails();
-
         Event event = getEvent(eventBody, userDetails);
 
         return eventRepository.insert(event);
@@ -42,7 +41,6 @@ public class EventService {
 
     public List<EventResponse> findAll() {
         List<Event> events = eventRepository.findAll();
-
         return events.stream().map(EventResponse::new).collect(Collectors.toList());
 
     }

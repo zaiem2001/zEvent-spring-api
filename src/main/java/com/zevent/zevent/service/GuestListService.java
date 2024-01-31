@@ -1,5 +1,8 @@
 package com.zevent.zevent.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,6 +22,9 @@ public class GuestListService {
     private GuestListRepository guestListRepository;
 
     @Autowired
+    private LoggedInUserDetails loggedInUserDetails;
+
+    @Autowired
     MongoTemplate mongoTemplate;
 
     public GuestList addGuestToEvent(GuestList guestList) {
@@ -36,5 +42,14 @@ public class GuestListService {
 
         return guestListRepository.findById(guestList.getId())
                 .orElseThrow(() -> new RuntimeException("Guest not found"));
+    }
+
+    public List<GuestList> findByUserAndStatus(Optional<StatusEnum> status) {
+        ObjectId userId = loggedInUserDetails.getUserDetails().get_id();
+
+        if (status.isPresent()) {
+            return guestListRepository.findByUserAndStatus(userId, status.get());
+        }
+        return guestListRepository.findByUser(userId);
     }
 }
