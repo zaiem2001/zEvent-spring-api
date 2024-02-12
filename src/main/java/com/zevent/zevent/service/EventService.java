@@ -42,11 +42,16 @@ public class EventService {
     public List<EventResponse> findAll() {
         List<Event> events = eventRepository.findAll();
         return events.stream().map(EventResponse::new).collect(Collectors.toList());
-
     }
 
-    public List<Event> getUsersEvents() {
-        return eventRepository.findByUser(this.loggedInUserDetails.getUserDetails().get_id());
+    public Event findById(ObjectId eventId) {
+        return eventRepository.findById(eventId).orElseThrow(() -> new CustomException("Event not found"));
+    }
+
+    public List<EventResponse> getUsersEvents() {
+        ObjectId userId = this.loggedInUserDetails.getUserDetails().get_id();
+        List<Event> events = eventRepository.findByUser(userId);
+        return events.stream().map(EventResponse::new).collect(Collectors.toList());
     }
 
     public GuestList enterTheEvent(ObjectId eventId, EnterEventReqBody enterEventReqBody) {

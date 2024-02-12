@@ -33,13 +33,18 @@ public class EventController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Event>> getUsersEvents() {
+    public ResponseEntity<List<EventResponse>> getUsersEvents() {
         return new ResponseEntity<>(eventService.getUsersEvents(), HttpStatus.OK);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<EventResponse>> getAllEvents() {
         return new ResponseEntity<>(eventService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<Event> getSingleEvent(@PathVariable ObjectId eventId) {
+        return new ResponseEntity<>(this.eventService.findById(eventId), HttpStatus.OK);
     }
 
     @PostMapping("/join/{eventId}")
