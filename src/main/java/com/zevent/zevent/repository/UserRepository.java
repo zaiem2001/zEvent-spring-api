@@ -11,4 +11,6 @@ import com.zevent.zevent.model.User;
 @Repository
 public interface UserRepository extends MongoRepository<User, ObjectId> {
     Optional<User> findByEmail(String email);
+
+    User findBy_id(ObjectId _id);
 }

@@ -8,12 +8,14 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zevent.zevent.model.enums.RoleEnum;
 
 import lombok.AllArgsConstructor;
@@ -32,8 +34,13 @@ public class User implements UserDetails {
     private ObjectId _id;
 
     private String username;
+
+    @Indexed(unique = true)
     private String email;
+
+    @JsonIgnore
     private String password;
+
     private String phoneNumber;
 
     private RoleEnum role;

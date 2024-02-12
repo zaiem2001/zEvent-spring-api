@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class IDate {
-    String start = ""; // Initialize the start field with a default value
-    String end = "";
-
+public class UserDto {
+    private String id;
+    private String name;
 }

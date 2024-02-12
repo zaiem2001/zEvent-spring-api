@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import com.zevent.zevent.model.enums.StatusEnum;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class GuestList {
 
     @Id
@@ -24,5 +26,8 @@ public class GuestList {
 
     @DocumentReference
     private User user;
+
+    @DocumentReference
+    private Event event;
 
 }
